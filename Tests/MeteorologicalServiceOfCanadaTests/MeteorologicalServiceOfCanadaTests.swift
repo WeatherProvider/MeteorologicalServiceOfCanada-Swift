@@ -49,6 +49,18 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertEqual(stationS1.longitude, -113.28, accuracy: 0.001)
     }
 
+    func testOp() {
+        let msc = MeteorologicalServiceOfCanada()
+        let getStationExpectation = expectation(description: "ah")
+        msc.getStations()
+        msc.didSetStations = {
+            print(msc.stations)
+            getStationExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 20, handler: nil)
+    }
+
     static var allTests = [
         ("testSiteData", testSiteData),
         ("testObservationStation", testObservationStation)
