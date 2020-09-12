@@ -1,9 +1,10 @@
 import XCTest
 import XMLCoder
+import GEOSwift
 @testable import MeteorologicalServiceOfCanada
 
 final class MeteorologicalServiceOfCanadaTests: XCTestCase {
-    func testExample() {
+    func testSiteData() {
         let decoder = XMLDecoder()
         let data = Fixtures.CityPage_Weather_BC_S2_E
 
@@ -29,7 +30,27 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertEqual(siteData.currentConditions.wind.bearing, 120.8, accuracy: 0.01)
     }
 
+    func testObservationStation() {
+        let decoder = JSONDecoder()
+        let data = try! decoder.decode(GeoJSON.self, from: Fixtures.Site_List_En)
+        guard case let .featureCollection(collection) = data else {
+            XCTFail()
+            return
+        }
+
+        let stations = collection.features.compactMap { feature in
+            ObservationStation(fromGeoJSONFeature: feature)
+        }
+
+        let stationS1 = stations.filter { $0.code == "s0000001" }.first!
+        XCTAssertEqual(stationS1.name, "Athabasca")
+        XCTAssertEqual(stationS1.provinceCode, "AB")
+        XCTAssertEqual(stationS1.latitude, 54.72, accuracy: 0.001)
+        XCTAssertEqual(stationS1.longitude, -113.28, accuracy: 0.001)
+    }
+
     static var allTests = [
-        ("testExample", testExample),
+        ("testSiteData", testSiteData),
+        ("testObservationStation", testObservationStation)
     ]
 }
