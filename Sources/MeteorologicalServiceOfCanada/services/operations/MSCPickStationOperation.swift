@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Alan Chu on 9/12/20.
-//
-
 import Foundation
 import GEOSwift
 
