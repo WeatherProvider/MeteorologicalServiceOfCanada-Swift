@@ -12,17 +12,16 @@ import FoundationNetworking
 import XMLCoder
 
 class MSCGetCurrentConditions: Operation {
-    var station: ObservationStation?
+    var station: StationRecord
     var xmlDecoder: XMLDecoder
 
-    var result: Result<CurrentConditions, Error>?
-
-    init(xmlDecoder: XMLDecoder) {
+    init(xmlDecoder: XMLDecoder, station: StationRecord) {
         self.xmlDecoder = xmlDecoder
+        self.station = station
     }
 
     override func main() {
-        guard let station = self.station else { return }
+        guard let station = self.station.station else { return }
         guard !isCancelled else { return }
 
         let urlString = "https://dd.weather.gc.ca/citypage_weather/xml/\(station.provinceCode)/\(station.code)_e.xml"
@@ -30,9 +29,9 @@ class MSCGetCurrentConditions: Operation {
         do {
             let data = try Data(contentsOf: url)
             let conditions = try xmlDecoder.decode(CurrentConditions.self, from: data)
-            result = .success(conditions)
+            self.station.currentConditions = .success(conditions)
         } catch {
-            result = .failure(error)
+            self.station.currentConditions = .failure(error)
         }
     }
 }

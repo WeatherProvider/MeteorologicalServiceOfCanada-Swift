@@ -14,13 +14,13 @@ import GEOSwift
 class MSCGetStations: Operation {
     let url = URL(string: "https://collaboration.cmc.ec.gc.ca/cmc/cmos/public_doc/msc-data/citypage-weather/site_list_en.geojson")!
 
-    var result: Result<[ObservationStation], Error>?
-    var stations: [ObservationStation]?
+    var stations: StationsRecord
 
     var decoder: JSONDecoder
 
-    public init(decoder: JSONDecoder) {
+    public init(decoder: JSONDecoder, stations: StationsRecord) {
         self.decoder = decoder
+        self.stations = stations
     }
 
     override func main() {
@@ -33,9 +33,9 @@ class MSCGetStations: Operation {
             let geoJSON = try decoder.decode(GeoJSON.self, from: data)
             guard case let .featureCollection(collection) = geoJSON else { return }
 
-            self.result = .success(collection.features.compactMap { ObservationStation(fromGeoJSONFeature: $0) })
+            self.stations.stations = .success(collection.features.compactMap { ObservationStation(fromGeoJSONFeature: $0) })
         } catch {
-            result = .failure(error)
+            self.stations.stations = .failure(error)
         }
     }
 }

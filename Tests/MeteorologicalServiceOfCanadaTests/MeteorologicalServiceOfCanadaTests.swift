@@ -51,16 +51,16 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertEqual(stationS1.longitude, -113.28, accuracy: 0.001)
     }
 
-    func testOp() {
-        let getStationExpectation = expectation(description: "ah")
-        msc.getStations()
-        msc.didSetStations = {
-            print(self.msc.stations)
-            getStationExpectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 20, handler: nil)
-    }
+//    func testOp() {
+//        let getStationExpectation = expectation(description: "ah")
+//        msc.getStations()
+//        msc.didSetStations = {
+//            print(self.msc.stations)
+//            getStationExpectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 20, handler: nil)
+//    }
 
     func testIsInCanada() {
         // Canada
@@ -75,6 +75,8 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         // Others
         let taipei101 = GEOSwift.Point(x: 121.564644, y: 25.033687)
         let bigBen = GEOSwift.Point(x: -0.124566, y: 51.500686)
+
+        let msc = MeteorologicalServiceOfCanada.self
 
         XCTAssertTrue(try! msc.canada.contains(stanleyPark))
         XCTAssertTrue(try! msc.canada.contains(cnTower))
