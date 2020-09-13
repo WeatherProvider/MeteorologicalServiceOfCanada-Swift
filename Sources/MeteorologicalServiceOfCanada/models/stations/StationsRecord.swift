@@ -19,7 +19,7 @@ class StationsRecord {
 
 class StationRecord {
     var location: (latitude: Double, longitude: Double)
-    var station: ObservationStation?
+    var station: Result<ObservationStation, Error>?
     var currentConditions: Result<CurrentConditions, Error>?
 
     init(location: (latitude: Double, longitude: Double)) {

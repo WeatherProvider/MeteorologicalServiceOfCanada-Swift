@@ -9,6 +9,12 @@ import Foundation
 import GEOSwift
 
 class MSCPickStation: Operation {
+    enum OperationError: Error {
+        case outOfBoundary
+        case noStationFound
+        case noStations
+    }
+
     var stations: StationsRecord
     var selectedStation: StationRecord
 
@@ -18,15 +24,45 @@ class MSCPickStation: Operation {
     }
 
     override func main() {
-        guard let stations = try? self.stations.stations?.get() else { return }
+        // Make sure the location is within boundaries
+        do {
+            let locationPoint = Point(x: selectedStation.location.longitude, y: selectedStation.location.latitude)
+            let isInBounds = try stations.boundary.contains(locationPoint)
+            guard isInBounds else {
+                selectedStation.station = .failure(OperationError.outOfBoundary)
+                return
+            }
+        } catch {
+            selectedStation.station = .failure(error)
+        }
 
-        let location = self.selectedStation.location 
+        // Get the stations from the stations record
+        guard let stationResult = self.stations.stations else {
+            selectedStation.station = .failure(OperationError.noStations)
+            return
+        }
 
+        let stations: [ObservationStation]
+        do {
+            stations = try stationResult.get()
+        } catch {
+            selectedStation.station = .failure(error)
+            return
+        }
+
+        // Sort stations by distance
+        // TODO: This can be improved.
+        let location = self.selectedStation.location
         let sorted = stations.sorted { lhs, rhs in
             distance(from: location, to: (lhs.latitude, lhs.longitude)) < distance(from: location, to: (rhs.latitude, rhs.longitude))
         }
 
-        self.selectedStation.station = sorted.first
+        guard let station = sorted.first else {
+            selectedStation.station = .failure(OperationError.noStationFound)
+            return
+        }
+
+        self.selectedStation.station = .success(station)
     }
 
     private func distance(from lhs: (latitude: Double, longitude: Double), to rhs: (latitude: Double, longitude: Double)) -> Double {

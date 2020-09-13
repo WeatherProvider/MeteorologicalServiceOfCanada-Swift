@@ -41,6 +41,10 @@ public class MeteorologicalServiceOfCanada {
                               then handler: @escaping (Result<CurrentConditions, Error>) -> Void) {
         let selectedStation = StationRecord(location: location)
 
+        if !operationQueue.doesContain(getStationsOperation) && !getStationsOperation.isFinished {
+            operationQueue.addOperation(getStationsOperation)
+        }
+
         let pickStation = MSCPickStation(stations, selectedStation: selectedStation)
         pickStation.addDependency(getStationsOperation)
         operationQueue.addOperation(pickStation)

@@ -32,36 +32,6 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertEqual(siteData.currentConditions.wind.bearing, 120.8, accuracy: 0.01)
     }
 
-    func testObservationStation() {
-        let decoder = JSONDecoder()
-        let data = try! decoder.decode(GeoJSON.self, from: Fixtures.Site_List_En)
-        guard case let .featureCollection(collection) = data else {
-            XCTFail()
-            return
-        }
-
-        let stations = collection.features.compactMap { feature in
-            ObservationStation(fromGeoJSONFeature: feature)
-        }
-
-        let stationS1 = stations.filter { $0.code == "s0000001" }.first!
-        XCTAssertEqual(stationS1.name, "Athabasca")
-        XCTAssertEqual(stationS1.provinceCode, "AB")
-        XCTAssertEqual(stationS1.latitude, 54.72, accuracy: 0.001)
-        XCTAssertEqual(stationS1.longitude, -113.28, accuracy: 0.001)
-    }
-
-//    func testOp() {
-//        let getStationExpectation = expectation(description: "ah")
-//        msc.getStations()
-//        msc.didSetStations = {
-//            print(self.msc.stations)
-//            getStationExpectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: 20, handler: nil)
-//    }
-
     func testIsInCanada() {
         // Canada
         let stanleyPark = GEOSwift.Point(x: -123.145848, y: 49.302877)
@@ -88,9 +58,35 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertFalse(try! msc.canada.contains(bigBen))
     }
 
+    func testIntegrationCurrentConditions() {
+        let getStanleyPark = self.expectation(description: "Get current conditions at Stanley Park")
+        msc.getCurrentConditions(at: (-49.302877, -123.145848)) { result in
+            XCTAssertSuccess(result)
+            getStanleyPark.fulfill()
+        }
+
+        waitForExpectations(timeout: 10)
+
+        let getCNTower = self.expectation(description: "Get current conditions at the CN Tower")
+        msc.getCurrentConditions(at: (43.642626, -79.387104)) { result in
+            XCTAssertSuccess(result)
+            getCNTower.fulfill()
+        }
+
+        waitForExpectations(timeout: 5)
+
+        // This should fail, Bellevue isn't in Canada.
+        let getBellevue = self.expectation(description: "Get current conditions at Bellevue, WA, USA")
+        msc.getCurrentConditions(at: (47.617432, -122.201717)) { result in
+            XCTAssertFailure(result)
+            getBellevue.fulfill()
+        }
+
+        waitForExpectations(timeout: 5)
+    }
+
     static var allTests = [
         ("testSiteData", testSiteData),
-        ("testObservationStation", testObservationStation),
         ("testIsInCanada", testIsInCanada)
     ]
 }
