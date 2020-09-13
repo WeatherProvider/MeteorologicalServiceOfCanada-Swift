@@ -1,9 +1,12 @@
 import XCTest
 import XMLCoder
+import GEOSwift
 @testable import MeteorologicalServiceOfCanada
 
 final class MeteorologicalServiceOfCanadaTests: XCTestCase {
-    func testExample() {
+    let msc = MeteorologicalServiceOfCanada()
+
+    func testSiteData() {
         let decoder = XMLDecoder()
         let data = Fixtures.CityPage_Weather_BC_S2_E
 
@@ -29,7 +32,49 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
         XCTAssertEqual(siteData.currentConditions.wind.bearing, 120.8, accuracy: 0.01)
     }
 
+    func testIsInCanada() {
+        let msc = MeteorologicalServiceOfCanada.self
+
+        XCTAssertTrue(try! msc.canada.contains(Fixtures.stanleyPark))
+        XCTAssertTrue(try! msc.canada.contains(Fixtures.cnTower))
+        XCTAssertTrue(try! msc.canada.contains(Fixtures.edmonton))
+
+        XCTAssertFalse(try! msc.canada.contains(Fixtures.bellevue))
+        XCTAssertFalse(try! msc.canada.contains(Fixtures.worldTradeCenter))
+        XCTAssertFalse(try! msc.canada.contains(Fixtures.taipei101))
+        XCTAssertFalse(try! msc.canada.contains(Fixtures.bigBen))
+    }
+
+    func testIntegrationCurrentConditions() {
+        let getStanleyPark = self.expectation(description: "Get current conditions at Stanley Park")
+        msc.getCurrentConditions(at: Fixtures.stanleyPark.asCoordinates) { result in
+            XCTAssertSuccess(result)
+            getStanleyPark.fulfill()
+        }
+
+        waitForExpectations(timeout: 10)
+
+        let getCNTower = self.expectation(description: "Get current conditions at the CN Tower")
+        msc.getCurrentConditions(at: Fixtures.cnTower.asCoordinates) { result in
+            XCTAssertSuccess(result)
+            getCNTower.fulfill()
+        }
+
+        waitForExpectations(timeout: 5)
+
+        // This should fail, Bellevue isn't in Canada.
+        let getBellevue = self.expectation(description: "Get current conditions at Bellevue, WA, USA")
+        msc.getCurrentConditions(at: Fixtures.bellevue.asCoordinates) { result in
+            XCTAssertFailure(result)
+            getBellevue.fulfill()
+        }
+
+        waitForExpectations(timeout: 5)
+    }
+
     static var allTests = [
-        ("testExample", testExample),
+        ("testSiteData", testSiteData),
+        ("testIsInCanada", testIsInCanada),
+        ("testIntegrationCurrentConditions", testIntegrationCurrentConditions)
     ]
 }

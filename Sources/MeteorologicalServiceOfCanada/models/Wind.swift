@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Alan Chu on 9/10/20.
-//
-
 import Foundation
 
 public struct Wind: Decodable {

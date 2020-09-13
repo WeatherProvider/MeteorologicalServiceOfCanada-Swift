@@ -16,7 +16,9 @@ let package = Package(
             targets: ["MeteorologicalServiceOfCanada"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/MaxDesiatov/XMLCoder.git", from: "0.11.1")
+        .package(url: "https://github.com/MaxDesiatov/XMLCoder.git", from: "0.11.1"),
+        .package(url: "https://github.com/GEOSwift/GEOSwift.git", from: "7.0.0"),
+        .package(url: "https://github.com/GEOSwift/geos.git", from: "5.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -24,10 +26,12 @@ let package = Package(
         .target(
             name: "MeteorologicalServiceOfCanada",
             dependencies: [
-                .product(name: "XMLCoder", package: "XMLCoder")
+                .product(name: "XMLCoder", package: "XMLCoder"),
+                .product(name: "GEOSwift", package: "GEOSwift"),
+                .product(name: "geos", package: "geos")
             ]),
         .testTarget(
             name: "MeteorologicalServiceOfCanadaTests",
-            dependencies: ["MeteorologicalServiceOfCanada"]),
+            dependencies: ["MeteorologicalServiceOfCanada"])
     ]
 )
