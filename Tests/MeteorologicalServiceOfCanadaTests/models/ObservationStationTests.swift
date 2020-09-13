@@ -44,17 +44,15 @@ final class ObservationStationTests: XCTestCase {
 
     // MARK: - MSCPickStation operation
     func testClosestStation() {
-        let coordinate = (49.302877, -123.145848)   // Stanley Park
-
         let stations = StationsRecord(boundary: MeteorologicalServiceOfCanada.canada)
         stations.stations = .success(self.stations)
-        let selectedStation = StationRecord(location: coordinate)
 
-        let stationOp = MSCPickStation(stations, selectedStation: selectedStation)
-        stationOp.start()
-        stationOp.waitUntilFinished()
+        let stanleyParkRecord = StationRecord(location: Fixtures.stanleyPark.asCoordinates)
+        let standleyParkStationOp = MSCPickStation(stations, selectedStation: stanleyParkRecord)
+        standleyParkStationOp.start()
+        standleyParkStationOp.waitUntilFinished()
 
-        let closestStation = try! selectedStation.station!.get()
+        let closestStation = try! stanleyParkRecord.station!.get()
 
         XCTAssertEqual(closestStation.code, "s0000865")
         XCTAssertEqual(closestStation.name, "West Vancouver")
@@ -63,12 +61,12 @@ final class ObservationStationTests: XCTestCase {
         XCTAssertEqual(closestStation.longitude, -123.16, accuracy: 0.001)
 
         // Should fail.
-        let bellevue = StationRecord(location: (47.617432, -122.201717))
-        let bellevueStationOp = MSCPickStation(stations, selectedStation: bellevue)
+        let bellevueRecord = StationRecord(location: Fixtures.bellevue.asCoordinates)
+        let bellevueStationOp = MSCPickStation(stations, selectedStation: bellevueRecord)
         bellevueStationOp.start()
         bellevueStationOp.waitUntilFinished()
 
-        XCTAssertFailure(bellevue.station!)
+        XCTAssertFailure(bellevueRecord.station!)
     }
 
     static var allTests = [

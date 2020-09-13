@@ -34,7 +34,7 @@ public class MeteorologicalServiceOfCanada {
                               then handler: @escaping (Result<CurrentConditions, Error>) -> Void) {
         let selectedStation = StationRecord(location: location)
 
-        if !operationQueue.doesContain(getStationsOperation) && !getStationsOperation.isFinished {
+        if !operationQueue.operations.contains(getStationsOperation) && !getStationsOperation.isFinished {
             operationQueue.addOperation(getStationsOperation)
         }
 
