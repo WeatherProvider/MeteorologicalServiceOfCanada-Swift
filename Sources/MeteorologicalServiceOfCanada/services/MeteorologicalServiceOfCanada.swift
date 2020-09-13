@@ -10,7 +10,6 @@ import GEOSwift
 import XMLCoder
 
 public class MeteorologicalServiceOfCanada {
-    let session: URLSession = URLSession(configuration: .ephemeral)
     let jsonDecoder = JSONDecoder()
     let xmlDecoder = XMLDecoder()
 
