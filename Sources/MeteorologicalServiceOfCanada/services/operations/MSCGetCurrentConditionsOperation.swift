@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import XMLCoder
 
 class MSCGetCurrentConditions: Operation {
@@ -13,7 +16,6 @@ class MSCGetCurrentConditions: Operation {
     var xmlDecoder: XMLDecoder
 
     var result: Result<CurrentConditions, Error>?
-
 
     init(xmlDecoder: XMLDecoder) {
         self.xmlDecoder = xmlDecoder
