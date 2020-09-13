@@ -74,6 +74,7 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
 
     static var allTests = [
         ("testSiteData", testSiteData),
-        ("testIsInCanada", testIsInCanada)
+        ("testIsInCanada", testIsInCanada),
+        ("testIntegrationCurrentConditions", testIntegrationCurrentConditions)
     ]
 }
