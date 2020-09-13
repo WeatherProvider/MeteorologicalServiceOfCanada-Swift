@@ -4,6 +4,8 @@ import GEOSwift
 @testable import MeteorologicalServiceOfCanada
 
 final class MeteorologicalServiceOfCanadaTests: XCTestCase {
+    let msc = MeteorologicalServiceOfCanada()
+
     func testSiteData() {
         let decoder = XMLDecoder()
         let data = Fixtures.CityPage_Weather_BC_S2_E
@@ -50,19 +52,43 @@ final class MeteorologicalServiceOfCanadaTests: XCTestCase {
     }
 
     func testOp() {
-        let msc = MeteorologicalServiceOfCanada()
         let getStationExpectation = expectation(description: "ah")
         msc.getStations()
         msc.didSetStations = {
-            print(msc.stations)
+            print(self.msc.stations)
             getStationExpectation.fulfill()
         }
 
         waitForExpectations(timeout: 20, handler: nil)
     }
 
+    func testIsInCanada() {
+        // Canada
+        let stanleyPark = GEOSwift.Point(x: -123.145848, y: 49.302877)
+        let cnTower = GEOSwift.Point(x: -79.387104, y: 43.642626)
+        let edmonton = GEOSwift.Point(x: -113.491300, y: 53.546225)
+
+        // USA
+        let bellevue = GEOSwift.Point(x: -122.201717, y: 47.617432)
+        let worldTradeCenter = GEOSwift.Point(x: -74.013143, y: 40.712977)
+
+        // Others
+        let taipei101 = GEOSwift.Point(x: 121.564644, y: 25.033687)
+        let bigBen = GEOSwift.Point(x: -0.124566, y: 51.500686)
+
+        XCTAssertTrue(try! msc.canada.contains(stanleyPark))
+        XCTAssertTrue(try! msc.canada.contains(cnTower))
+        XCTAssertTrue(try! msc.canada.contains(edmonton))
+
+        XCTAssertFalse(try! msc.canada.contains(bellevue))
+        XCTAssertFalse(try! msc.canada.contains(worldTradeCenter))
+        XCTAssertFalse(try! msc.canada.contains(taipei101))
+        XCTAssertFalse(try! msc.canada.contains(bigBen))
+    }
+
     static var allTests = [
         ("testSiteData", testSiteData),
-        ("testObservationStation", testObservationStation)
+        ("testObservationStation", testObservationStation),
+        ("testIsInCanada", testIsInCanada)
     ]
 }
