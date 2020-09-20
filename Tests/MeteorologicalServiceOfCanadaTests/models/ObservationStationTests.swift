@@ -6,9 +6,9 @@ final class ObservationStationTests: XCTestCase {
     let msc = MeteorologicalServiceOfCanada()
     var stations: [ObservationStation] = []
 
-    override func setUp() {
-        let geoJSON = try! JSONDecoder().decode(GeoJSON.self, from: Fixtures.Site_List_En)
-        guard case let .featureCollection(collection) = geoJSON else { fatalError() }
+    override func setUpWithError() throws {
+        let geoJSON = try MeteorologicalServiceOfCanada.jsonDecoder.decode(GeoJSON.self, from: Fixtures.Site_List_En)
+        guard case let .featureCollection(collection) = geoJSON else { fatalError("Expected a feature collection") }
         self.stations = collection.features.compactMap { ObservationStation(fromGeoJSONFeature: $0) }
     }
 
@@ -23,17 +23,18 @@ final class ObservationStationTests: XCTestCase {
             ObservationStation(fromGeoJSONFeature: feature)
         }
 
-        let stationS1 = stations.first { $0.code == "s0000001" }!
-        XCTAssertEqual(stationS1.name, "Athabasca")
-        XCTAssertEqual(stationS1.provinceCode, "AB")
-        XCTAssertEqual(stationS1.latitude, 54.72, accuracy: 0.001)
-        XCTAssertEqual(stationS1.longitude, -113.28, accuracy: 0.001)
+        let stationS1 = stations.filter { $0.code == "s0000001" }.first
+        XCTAssertNotNil(stationS1)
+        XCTAssertEqual(stationS1!.name, "Athabasca")
+        XCTAssertEqual(stationS1!.provinceCode, "AB")
+        XCTAssertEqual(stationS1!.latitude, 54.72, accuracy: 0.001)
+        XCTAssertEqual(stationS1!.longitude, -113.28, accuracy: 0.001)
     }
 
     // MARK: - MSCGetStations operation
     func testGetStations() throws {
         let record = StationsRecord(boundary: MeteorologicalServiceOfCanada.canada)
-        let getStationsOp = MSCGetStations(decoder: JSONDecoder(), stations: record)
+        let getStationsOp = MSCGetStations(decoder: MeteorologicalServiceOfCanada.jsonDecoder, stations: record)
         getStationsOp.start()
         getStationsOp.waitUntilFinished()
 
