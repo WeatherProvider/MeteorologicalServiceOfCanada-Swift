@@ -1,0 +1,38 @@
+name: Apple
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1.1
+      with:
+        xcode-version: 12
+    - uses: actions/checkout@v2
+    - name: Build
+      run: swift build -v
+    - name: Run tests
+      run: swift test -v
+
+  ios:
+    runs-on: macos-latest
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1.1
+      with:
+        xcode-version: 12
+    - uses: actions/checkout@v2
+    - name: Build
+      run: xcodebuild clean build-for-testing
+        -scheme 'MeteorologicalServiceOfCanada'
+        -destination 'name=iPhone 11 Pro'
+        -quiet
+    - name: Unit Test
+      run: xcodebuild test-without-building
+        -scheme 'MeteorologicalServiceOfCanada'
+        -destination 'name=iPhone 11 Pro'
+        -quiet
