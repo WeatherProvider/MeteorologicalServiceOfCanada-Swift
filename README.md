@@ -1,3 +1,5 @@
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg" alt="Flag of Canada" align="left" width="64">
+
 # Meteorological Service Of Canada
 ![Swift 5.3](https://img.shields.io/badge/swift-5.3-orange)
 ![MIT License](https://img.shields.io/badge/license-MIT-lightgrey)
