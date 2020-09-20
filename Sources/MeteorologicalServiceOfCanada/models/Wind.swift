@@ -5,12 +5,12 @@ public struct Wind: Decodable {
         case speed, /*gust,*/ direction, bearing
     }
 
-    let speed: Measurement<UnitSpeed>
+    public let speed: Measurement<UnitSpeed>
 //    let gust: Measurement<UnitSpeed>?
-    let direction: String
+    public let direction: String
 
     /// In degrees.
-    let bearing: Double
+    public let bearing: Double
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
