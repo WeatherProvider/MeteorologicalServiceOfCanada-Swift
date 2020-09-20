@@ -16,7 +16,7 @@ public class MeteorologicalServiceOfCanada {
         return canada
     }()
 
-    init() {
+    public init() {
         self.operationQueue = OperationQueue()
         self.operationQueue.name = "MSC_Queue"
         self.operationQueue.maxConcurrentOperationCount = 1
@@ -30,8 +30,8 @@ public class MeteorologicalServiceOfCanada {
         operationQueue.addOperation(getStationsOperation)
     }
 
-    func getCurrentConditions(at location: (latitude: Double, longitude: Double),
-                              then handler: @escaping (Result<CurrentConditions, Error>) -> Void) {
+    public func getCurrentConditions(at location: (latitude: Double, longitude: Double),
+                                     then handler: @escaping (Result<CurrentConditions, Error>) -> Void) {
         let selectedStation = StationRecord(location: location)
 
         if !operationQueue.operations.contains(getStationsOperation) && !getStationsOperation.isFinished {
