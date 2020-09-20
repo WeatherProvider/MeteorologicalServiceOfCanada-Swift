@@ -1,9 +1,14 @@
 # Meteorological Service Of Canada
-![Swift](https://github.com/WeatherProvider/MeteorologicalServiceOfCanada-Swift/workflows/Swift/badge.svg)
+![Swift 5.3](https://img.shields.io/badge/swift-5.3-orange)
+![MIT License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+A Swift wrapper for Meteorological Service Of Canada Open Data.
 
 ## Platforms
-- Apple platforms
-- Ubuntu
+| Platform | CI |
+| :------- | :- |
+| Apple    | [![Apple](https://github.com/WeatherProvider/MeteorologicalServiceOfCanada-Swift/workflows/Apple/badge.svg)](https://github.com/WeatherProvider/MeteorologicalServiceOfCanada-Swift/actions?query=workflow%3AApple) |
+| Linux (Ubuntu & Amazon) | [![Linux](https://github.com/ualch9/MeteorologicalServiceOfCanada-Swift/workflows/Linux/badge.svg)](https://github.com/WeatherProvider/MeteorologicalServiceOfCanada-Swift/actions?query=workflow%3ALinux) |
 
 ## Installation
 Swift Package Manager:
@@ -12,7 +17,7 @@ https://github.com/WeatherProvider/MeteorologicalServiceOfCanada-Swift.git
 ```
 
 ### Important
-This library is still undergoing major changes. It is recommended you use exact version when installing to minimize impacts.
+This library is still undergoing major changes. It is recommended you use exact version when installing to minimize future impacts.
 
 ## Usage
 ```swift

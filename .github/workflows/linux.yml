@@ -1,4 +1,5 @@
-name: Swift
+name: Linux
+
 on:
   push:
     branches: [ main ]
@@ -6,19 +7,21 @@ on:
     branches: [ main ]
 
 jobs:
-  macos:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
-
-  linux:
+  ubuntu:
     runs-on: ubuntu-latest
     container:
-      image: swift:5.2.5
+      image: swift:5.3
+      options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --security-opt apparmor=unconfined
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build and Test
+        run: swift test --enable-test-discovery
+
+  amazonlinux:
+    runs-on: ubuntu-latest
+    container:
+      image: swift:5.3-amazonlinux2
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --security-opt apparmor=unconfined
     steps:
       - name: Checkout
